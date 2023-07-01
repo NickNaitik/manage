@@ -39,7 +39,7 @@ public class CustomersService {
         Customer customer = customersRepository.findById(cusId).orElseThrow(() -> new IllegalStateException(
                 "Customer with id "+ cusId + " does not exist"));
 
-        String response = "";
+        String response = "Nothing Updated!";
         if(cusMobile != null && !Objects.equals(customer.getCus_mobile(),cusMobile)){
             Optional<Customer> custByMobile = customersRepository.findCustomerByMobile(cusMobile);
 
@@ -56,7 +56,7 @@ public class CustomersService {
             response = "Customer Email is Successfully Updated!";
         }
 
-        if(cusDueAmount != null && !Objects.equals(customer.getCus_dueAmount(),cusDueAmount)){
+        if(cusDueAmount != null && cusDueAmount != 0){
 
             if(cusDueAmount >= customer.getCus_advAmount()) {
                 cusDueAmount = cusDueAmount - customer.getCus_advAmount();
@@ -74,7 +74,7 @@ public class CustomersService {
             response = "Customer Due Amount is Successfully Updated!";
         }
 
-        if(cusAdvAmount != null && !Objects.equals(customer.getCus_advAmount(), cusAdvAmount)){
+        if(cusAdvAmount != null && cusAdvAmount != 0){
 
             if(cusAdvAmount != 0.0 && cusAdvAmount > customer.getCus_dueAmount()) {
                 cusAdvAmount = cusAdvAmount-customer.getCus_dueAmount();
@@ -91,7 +91,8 @@ public class CustomersService {
             response = "Customer Advance Amount is SuccessFully Updated!";
         }
 
-        if(cusBuyAmount != null && !Objects.equals(customer.getCus_buyAmount(),cusBuyAmount)){
+        if(cusBuyAmount != null && cusBuyAmount != 0){
+            cusBuyAmount = customer.getCus_buyAmount() + cusBuyAmount;
             customer.setCus_buyAmount(cusBuyAmount);
             response = "Customer Total Buy Amount is SuccessFully Updated!";
         }
