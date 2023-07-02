@@ -21,4 +21,10 @@ public class SalesController {
         return salesService.gatAllSales();
     }
 
+    @PostMapping("newSale")
+    public String newSale(@RequestBody SalesDto salesDto){
+        return salesService.addNewSale(salesDto);
+
+    }
+
 }
