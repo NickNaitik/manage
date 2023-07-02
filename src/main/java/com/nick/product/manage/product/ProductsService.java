@@ -51,7 +51,7 @@ public class ProductsService {
         Product product = productsRepository.findById(prodId).orElseThrow(() -> new IllegalStateException(
                 "Product with id "+ prodId + " does not exist"));
 
-        String response = "Not Updated !";
+        String response = "Nothing Updated !";
         if(prodAvailable != null && prodAvailable>0) {
             prodAvailable = product.getProd_Available() + prodAvailable;
             product.setProd_Available(prodAvailable);

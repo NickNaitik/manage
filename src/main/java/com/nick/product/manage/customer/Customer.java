@@ -13,7 +13,7 @@ public class Customer {
             name = "customer_sequence",
             sequenceName = "customer_sequence",
             allocationSize = 1,
-            initialValue = 1000
+            initialValue = 1001
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
