@@ -10,16 +10,14 @@ public class SalesDto {
     private Long sale_Cus_Id;
     private Map<String, Integer> sale_Details;
     private Double sale_TotalAmount;
-    private String sale_PaymentStatus;
     private Double sale_PaymentRec;
 
     public SalesDto() {}
 
-    public SalesDto(Long sale_Cus_Id, Map<String, Integer> sale_Details, Double sale_TotalAmount, String sale_PaymentStatus, Double sale_PaymentRec) {
+    public SalesDto(Long sale_Cus_Id, Map<String, Integer> sale_Details, Double sale_TotalAmount, Double sale_PaymentRec) {
         this.sale_Cus_Id = sale_Cus_Id;
         this.sale_Details = sale_Details;
         this.sale_TotalAmount = sale_TotalAmount;
-        this.sale_PaymentStatus = sale_PaymentStatus;
         this.sale_PaymentRec = sale_PaymentRec;
     }
 
@@ -33,10 +31,6 @@ public class SalesDto {
 
     public Double getSale_TotalAmount() {
         return sale_TotalAmount;
-    }
-
-    public String getSale_PaymentStatus() {
-        return sale_PaymentStatus;
     }
 
     public Double getSale_PaymentRec() {

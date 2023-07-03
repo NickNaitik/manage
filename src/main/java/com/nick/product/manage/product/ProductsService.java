@@ -31,7 +31,7 @@ public class ProductsService {
         }
         productsRepository.save(product);
         Optional<Product> prod2 = productsRepository.findProductByName(product.getProd_Name());
-        return "Product added Successfully, Please Note Prod Id : "+prod2.get().getProd_Id();
+        return "Product added Successfully, Please Note Product Id : "+prod2.get().getProd_Id();
     }
 
     public String deleteProduct(Long prodId) {
@@ -55,14 +55,16 @@ public class ProductsService {
         if(prodAvailable != null && prodAvailable>0) {
             prodAvailable = product.getProd_Available() + prodAvailable;
             product.setProd_Available(prodAvailable);
-            return response = product.getProd_Name() + " quantity updated!";
+            response = product.getProd_Name() + " quantity updated!";
         }
 
         if(prodSold != null && prodSold>0){
+            prodAvailable = product.getProd_Available()-prodSold;
+            product.setProd_Available(prodAvailable);
             prodSold = product.getProd_Sold() + prodSold;
             product.setProd_Sold(prodSold);
 
-            return "Total Sold product Updated!";
+            response =  "Total Sold product Updated!";
         }
         return response;
     }

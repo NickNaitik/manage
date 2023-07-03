@@ -1,6 +1,7 @@
 package com.nick.product.manage.sale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +23,8 @@ public class SalesController {
     }
 
     @PostMapping("newSale")
-    public String newSale(@RequestBody SalesDto salesDto){
+    public ResponseEntity<String> newSale(@RequestBody SalesDto salesDto) {
         return salesService.addNewSale(salesDto);
-
     }
 
 }
