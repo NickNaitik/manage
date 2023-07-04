@@ -1,9 +1,11 @@
 package com.nick.product.manage.sale;
 
+import com.nick.product.manage.customer.Customer;
 import com.nick.product.manage.customer.CustomersService;
 import com.nick.product.manage.product.Product;
 import com.nick.product.manage.product.ProductsRepository;
 import com.nick.product.manage.product.ProductsService;
+import com.nick.product.manage.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,9 @@ public class SalesService {
 
     @Autowired
     private SaleValidator saleValidator;
+
+    @Autowired
+    private MessageService messageService;
 
     @Autowired
     public void SalesService(SalesRepository salesRepository) {
@@ -86,6 +91,12 @@ public class SalesService {
             );
 
             Sale s = salesRepository.save(sale);
+
+            if(s != null){
+                Optional<Customer> cus = customersService.getCustomerById(s.getSale_Cus_Id());
+                messageService.sendMessage(cus.get().getCus_mobile(), " Hi ,"+cus.get().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.get().getCus_dueAmount());
+                messageService.sendWhatsappMessage(cus.get().getCus_mobile(), " Hi ,"+cus.get().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.get().getCus_dueAmount());
+            }
 
             response = ResponseEntity.accepted().body("Sale Done!, Your Sale id : " + s.getSale_Id());
         }
