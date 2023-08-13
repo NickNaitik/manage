@@ -10,7 +10,7 @@ import java.util.List;
 public class ProductsConfig {
 
     @Bean
-    CommandLineRunner commandLineProductRunner(ProductsRepository productsRepository){
+    CommandLineRunner productCommandLineRunner(ProductsRepository productsRepository){
 
         return args -> {
             Product firstProduct = new Product("PEPSI 225ML", "2250ML", 90L, 91.0,85.0);

@@ -13,7 +13,7 @@ import java.util.Map;
 public class SalesConfig {
 
     @Bean
-    CommandLineRunner saleCommandLine(SalesRepository salesRepository) {
+    CommandLineRunner saleCommandLineRunner(SalesRepository salesRepository) {
 
         Map<Long, Integer> soldProduct = new HashMap<Long, Integer>();
         soldProduct.put(101L, 10);
