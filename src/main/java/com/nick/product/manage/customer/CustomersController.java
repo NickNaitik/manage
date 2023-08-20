@@ -17,15 +17,23 @@ public class CustomersController {
         this.customersService = customersService;
     }
 
+    //This method only master user can call, need to write logic or any authorization things
     @GetMapping("getAllCustomers")
     public List<Customer> getAllCustomers(){
         return customersService.getAllCustomer();
     }
 
-    @GetMapping(path = "{customerId}")
-    public Optional<Customer> getCustomerById(@PathVariable("customerId") Long cus_Id) {
+    //Suppliers can see all the customers under them only
+    @GetMapping(path = "{supplier_uid}")
+    public List<Customer> getSupplierCustomers(@PathVariable("supplier_uid") String supplier_uid){
+        return customersService.getSupplierCustomers(supplier_uid);
+    }
 
-        return customersService.getCustomerById(cus_Id);
+    @GetMapping(path = "/{supplierUid}/{customerUid}")
+    public Optional<Customer> getCustomerById(@PathVariable("customerUid") Long cus_uid,
+                                              @PathVariable("supplierUid") String supplier_uid) {
+
+        return customersService.getCustomerById(cus_uid, supplier_uid);
 
     }
 
@@ -34,20 +42,22 @@ public class CustomersController {
         return customersService.addNewCustomer(customer);
     }
 
-    @PutMapping(path = "{customerId}")
-    public String updateCustomer(@PathVariable("customerId") Long cus_Id,
+    @PutMapping(path = "/{supplierUid}/{customerUid}")
+    public String updateCustomer(@PathVariable("supplierUid") String supplier_uid,
+                                 @PathVariable("customerUid") Long cus_Id,
                                  @RequestParam(required = false) String cus_mobile,
                                  @RequestParam(required = false) String cus_email,
                                  @RequestParam(required = false) Double cus_dueAmount,
                                  @RequestParam(required = false) Double cus_advAmount,
                                  @RequestParam(required = false) Double cus_buyAmount
                                  ) {
-        return customersService.updateCustomer(cus_Id, cus_mobile, cus_email, cus_dueAmount, cus_advAmount,cus_buyAmount);
+        return customersService.updateCustomer(cus_Id, supplier_uid, cus_mobile, cus_email, cus_dueAmount, cus_advAmount,cus_buyAmount);
     }
 
-    @DeleteMapping(path ="{customerId}")
-    public String deleteCustomer(@PathVariable("customerId") Long cus_Id){
-        return customersService.deleteCustomer(cus_Id);
+    @DeleteMapping(path ="{supplierUid}/{customerUid}")
+    public String deleteCustomer(@PathVariable("customerUid") Long cus_Id,
+                                 @PathVariable("supplierUid") String supplier_uid){
+        return customersService.deleteCustomer(cus_Id, supplier_uid);
     }
 
 

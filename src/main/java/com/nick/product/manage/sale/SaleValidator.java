@@ -27,9 +27,9 @@ public class SaleValidator {
         ResponseEntity<String> response = null;
         String responseBody = null;
 
-        if(!customersRepository.existsById(salesDto.getSale_Cus_Id())){
+        if(customersRepository.findCustomerofSupplier(salesDto.getSupplier_uid(),salesDto.getSale_Cus_Id()).isEmpty()){
 
-            responseBody =  "Customer id does not exist!";
+            responseBody =  "Customer does not exist for you!";
 
         } else {
 
@@ -40,12 +40,12 @@ public class SaleValidator {
                 Integer productQuantity = entry.getValue();
 
                 // Do something with key and value
-                Optional<Product> product = productsRepository.findProductByName(productName);
+                Optional<Product> product = productsRepository.findProductByNameAndSupplier(productName, salesDto.getSupplier_uid());
 
                 if(product.isPresent()) {
 
-                    if(product.get().getProd_Available() < productQuantity) {
-                        responseBody = productName + " quantity is low, only "+product.get().getProd_Available()+ " available.";
+                    if(product.get().getProd_avail() < productQuantity) {
+                        responseBody = productName + " quantity is low, only "+product.get().getProd_avail()+ " available.";
                     }
 
                 } else {

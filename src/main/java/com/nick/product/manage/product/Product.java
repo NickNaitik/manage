@@ -17,85 +17,96 @@ public class Product {
             strategy = GenerationType.SEQUENCE,
             generator = "product_sequence"
     )
-    private Long prod_Id;
-    private String prod_Name;
-    private String prod_Quantity;
-    private Long prod_Available;
-    private Double prod_SalesPrice;
-    private Double prod_CostPrice;
-    private Long prod_Sold = 0L;
+    private Long prod_uid;
+    private String prod_name;
+    private String prod_quantity;
+    private Long prod_avail;
+    private Double prod_salesPrice;
+    private Double prod_costPrice;
+    private Long prod_sold = 0L;
+    private String supplier_uid;
 
     public Product() {}
-    public Product(String prod_Name, String prod_Quantity, Long prod_Available, Double prod_SalesPrice, Double prod_CostPrice) {
-        this.prod_Name = prod_Name;
-        this.prod_Quantity = prod_Quantity;
-        this.prod_Available = prod_Available;
-        this.prod_SalesPrice = prod_SalesPrice;
-        this.prod_CostPrice = prod_CostPrice;
+
+    public Product(String prod_name, String prod_quantity, Long prod_avail, Double prod_salesPrice, Double prod_costPrice, String supplier_uid) {
+        this.prod_name = prod_name;
+        this.prod_quantity = prod_quantity;
+        this.prod_avail = prod_avail;
+        this.prod_salesPrice = prod_salesPrice;
+        this.prod_costPrice = prod_costPrice;
+        this.supplier_uid = supplier_uid;
     }
 
-    public Long getProd_Id() {
-        return prod_Id;
+    public Long getProd_uid() {
+        return prod_uid;
     }
 
-    public String getProd_Name() {
-        return prod_Name;
+    public String getProd_name() {
+        return prod_name;
     }
 
-    public void setProd_Name(String prod_Name) {
-        this.prod_Name = prod_Name;
+    public void setProd_name(String prod_name) {
+        this.prod_name = prod_name;
     }
 
-    public String getProd_Quantity() {
-        return prod_Quantity;
+    public String getProd_quantity() {
+        return prod_quantity;
     }
 
-    public void setProd_Quantity(String prod_Quantity) {
-        this.prod_Quantity = prod_Quantity;
+    public void setProd_quantity(String prod_quantity) {
+        this.prod_quantity = prod_quantity;
     }
 
-    public Long getProd_Available() {
-        return prod_Available;
+    public Long getProd_avail() {
+        return prod_avail;
     }
 
-    public void setProd_Available(Long prod_Available) {
-        this.prod_Available = prod_Available;
+    public void setProd_avail(Long prod_avail) {
+        this.prod_avail = prod_avail;
     }
 
-    public Double getProd_SalesPrice() {
-        return prod_SalesPrice;
+    public Double getProd_salesPrice() {
+        return prod_salesPrice;
     }
 
-    public void setProd_SalesPrice(Double prod_SalesPrice) {
-        this.prod_SalesPrice = prod_SalesPrice;
+    public void setProd_salesPrice(Double prod_salesPrice) {
+        this.prod_salesPrice = prod_salesPrice;
     }
 
-    public Double getProd_CostPrice() {
-        return prod_CostPrice;
+    public Double getProd_costPrice() {
+        return prod_costPrice;
     }
 
-    public void setProd_CostPrice(Double prod_CostPrice) {
-        this.prod_CostPrice = prod_CostPrice;
+    public void setProd_costPrice(Double prod_costPrice) {
+        this.prod_costPrice = prod_costPrice;
     }
 
-    public Long getProd_Sold() {
-        return prod_Sold;
+    public Long getProd_sold() {
+        return prod_sold;
     }
 
-    public void setProd_Sold(Long prod_Sold) {
-        this.prod_Sold = prod_Sold;
+    public void setProd_sold(Long prod_sold) {
+        this.prod_sold = prod_sold;
+    }
+
+    public String getSupplier_uid() {
+        return supplier_uid;
+    }
+
+    public void setSupplier_uid(String supplier_uid) {
+        this.supplier_uid = supplier_uid;
     }
 
     @Override
     public String toString() {
         return "Product{" +
-                "prod_Id=" + prod_Id +
-                ", prod_Name='" + prod_Name + '\'' +
-                ", prod_Quantity='" + prod_Quantity + '\'' +
-                ", prod_Available=" + prod_Available +
-                ", prod_SalesPrice=" + prod_SalesPrice +
-                ", prod_CostPrice=" + prod_CostPrice +
-                ", prod_Sold=" + prod_Sold +
+                "prod_uid=" + prod_uid +
+                ", prod_name='" + prod_name + '\'' +
+                ", prod_quantity='" + prod_quantity + '\'' +
+                ", prod_avail=" + prod_avail +
+                ", prod_salesPrice=" + prod_salesPrice +
+                ", prod_costPrice=" + prod_costPrice +
+                ", prod_sold=" + prod_sold +
                 '}';
     }
 }

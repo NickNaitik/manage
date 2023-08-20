@@ -1,5 +1,7 @@
 package com.nick.product.manage.customer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,8 +10,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+
 @Service
 public class CustomersService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomersService.class);
 
     private final CustomersRepository customersRepository;
 
@@ -19,14 +24,15 @@ public class CustomersService {
     }
 
     public String addNewCustomer(Customer customer){
-        Optional<Customer> cust1 = customersRepository.findCustomerByMobile(customer.getCus_mobile());
+        Optional<Customer> cust1 = customersRepository.findCustomerBYMobileAndSupplier(customer.getCus_mobile(), customer.getSupplier_uid());
 
         if(cust1.isPresent()){
             throw new IllegalCallerException("Mobile Number Already Registered");
         }
-        customersRepository.save(customer);
-        Optional<Customer> cust2 = customersRepository.findCustomerByMobile(customer.getCus_mobile());
-        return "Customer Added Successfully!!, Please Note CustomerId : "+ cust2.get().getCus_Id();
+
+        Customer cust2 = customersRepository.save(customer);
+        //Optional<Customer> cust2 = customersRepository.findCustomerByMobile(customer.getCus_mobile());
+        return "Customer Added Successfully!!, Please Note CustomerId : "+ cust2.getCus_uid();
     }
 
     public List<Customer> getAllCustomer() {
@@ -34,10 +40,14 @@ public class CustomersService {
     }
 
     @Transactional
-    public String updateCustomer(Long cusId, String cusMobile, String cusEmail, Double cusDueAmount, Double cusAdvAmount, Double cusBuyAmount) {
+    public String updateCustomer(Long cusId, String supplier_uid, String cusMobile, String cusEmail, Double cusDueAmount, Double cusAdvAmount, Double cusBuyAmount) {
 
-        Customer customer = customersRepository.findById(cusId).orElseThrow(() -> new IllegalStateException(
-                "Customer with id "+ cusId + " does not exist"));
+        logger.info("cusDueAmount : "+ cusDueAmount);
+        logger.info("cusId : "+ cusId);
+        logger.info("supplier_uid : "+ supplier_uid);
+        logger.info("cusMobile : "+ cusMobile);
+        Customer customer = customersRepository.findCustomerofSupplier(supplier_uid, cusId).orElseThrow(() -> new IllegalStateException(
+                "Customer with id "+ cusId + " does not exist for you!!"));
 
         String response = "Nothing Updated!";
         if(cusMobile != null && !Objects.equals(customer.getCus_mobile(),cusMobile)){
@@ -45,7 +55,7 @@ public class CustomersService {
 
             if(custByMobile.isPresent()){
                 throw new IllegalArgumentException("This mobile number is already registered with customerId : "
-                        +custByMobile.get().getCus_Id());
+                        +custByMobile.get().getCus_uid());
             }
             customer.setCus_mobile(cusMobile);
             response = "Customer Mobile Number is Successfully Updated!";
@@ -100,25 +110,33 @@ public class CustomersService {
         return response;
     }
 
-    public String deleteCustomer(Long cusId) {
-        boolean exists = customersRepository.existsById(cusId);
+    public String deleteCustomer(Long cusId,String supplier_uid) {
+        Optional<Customer> customer = customersRepository.findCustomerofSupplier(supplier_uid, cusId);
 
-        if(!exists){
-            throw new IllegalStateException("Customer with id "+cusId + " does not present");
+        if(customer.isEmpty()){
+            return "Customer with id "+cusId + " does not present for you!!, So you can't delete";
+        } else {
+            customersRepository.deleteById(cusId);
+            return "Customer with Id - " + cusId + " deleted Successfully!";
         }
-
-        customersRepository.deleteById(cusId);
-        return "Customer with Id - "+cusId +" deleted Successfully!";
     }
 
-    public Optional<Customer> getCustomerById(Long cusId) {
-        boolean exists = customersRepository.existsById(cusId);
+    public Optional<Customer> getCustomerById(Long cus_uid, String supplier_uid) {
+        boolean exists = customersRepository.existsById(cus_uid);
 
         if(!exists){
-            throw new IllegalStateException("Customer with id "+cusId + " does not present");
+            throw new IllegalStateException("Customer with id "+cus_uid + " does not present");
         }
 
-        Optional<Customer> customer = customersRepository.findById(cusId);
+        Optional<Customer> customer = customersRepository.findById(cus_uid);
+        if(!customer.get().getSupplier_uid().equals(supplier_uid)){
+            throw new IllegalArgumentException("You don't have permission to see this customer!");
+        }
+        return customer;
+    }
+
+    public List<Customer> getSupplierCustomers(String supplierUid) {
+        List<Customer> customer = customersRepository.findSupplierCustomers(supplierUid);
         return customer;
     }
 }

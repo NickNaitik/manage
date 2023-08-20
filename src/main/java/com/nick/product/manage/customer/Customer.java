@@ -19,7 +19,7 @@ public class Customer {
             strategy = GenerationType.SEQUENCE,
             generator = "customer_sequence"
     )
-    private Long cus_Id;
+    private Long cus_uid;
     private String cus_name;
     private String cus_shopName;
     private String cus_mobile;
@@ -28,7 +28,7 @@ public class Customer {
     private Double cus_dueAmount = 0.0;
     private Double cus_advAmount = 0.0;
     private Double cus_buyAmount = 0.0;
-
+    private String supplier_uid;
 
     public void setCus_name(String cus_name) {
         this.cus_name = cus_name;
@@ -61,9 +61,10 @@ public class Customer {
     public void setCus_buyAmount(Double cus_buyAmount) {
         this.cus_buyAmount = cus_buyAmount;
     }
+    public void setSupplier_uid(String supplier_uid) { this.supplier_uid = supplier_uid; }
 
-    public Long getCus_Id() {
-        return cus_Id;
+    public Long getCus_uid() {
+        return cus_uid;
     }
 
     public String getCus_name() {
@@ -98,24 +99,28 @@ public class Customer {
         return cus_buyAmount;
     }
 
+    public String getSupplier_uid() { return supplier_uid; }
+
+
     public Customer(){ }
 
 
-    public Customer(String cusName, String cusShopName, String cusMobile, String cusEmail, String cusAddress) {
+    public Customer(String cusName, String cusShopName, String cusMobile, String cusEmail, String cusAddress, String supplier_uid) {
         this.cus_name = cusName;
         this.cus_shopName = cusShopName;
         this.cus_mobile = cusMobile;
         this.cus_email = cusEmail;
         this.cus_address = cusAddress;
+        this.supplier_uid = supplier_uid;
     }
 
     public Customer(Long cus_Id, String cus_mobile) {
-        this.cus_Id = cus_Id;
+        this.cus_uid = cus_Id;
         this.cus_mobile = cus_mobile;
     }
 
     public Customer(Long cus_Id, Double cus_dueAmount, Double cus_advAmount, Double cus_buyAmount) {
-        this.cus_Id = cus_Id;
+        this.cus_uid = cus_Id;
         this.cus_dueAmount = cus_dueAmount;
         this.cus_advAmount = cus_advAmount;
         this.cus_buyAmount = cus_buyAmount;
@@ -124,7 +129,7 @@ public class Customer {
     @Override
     public String toString() {
         return "Customers{" +
-                "cus_Id=" + cus_Id +
+                "cus_uid=" + cus_uid +
                 ", cus_name='" + cus_name + '\'' +
                 ", cus_shopName='" + cus_shopName + '\'' +
                 ", cus_mobile='" + cus_mobile + '\'' +

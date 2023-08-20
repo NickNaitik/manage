@@ -25,13 +25,15 @@ public class SalesConfig {
                     soldProduct.toString(),
                     2000.0,
                     "Partial",
-                    1200.0);
+                    1200.0,
+                    "SUP101");
 
-            Sale sale2 = new Sale(1001L,
+            Sale sale2 = new Sale(1002L,
                     soldProduct.toString(),
                     2000.0,
                     "Completed",
-                    2000.0);
+                    2000.0,
+                    "SUP102");
 
 
             salesRepository.saveAll(

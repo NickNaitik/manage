@@ -59,13 +59,13 @@ public class SalesService {
 
             if (salesDto.getSale_TotalAmount().equals(salesDto.getSale_PaymentRec())) {
                 paymentStatus = "Full Payment";
-                customersService.updateCustomer(salesDto.getSale_Cus_Id(), null, null, null, null, salesDto.getSale_TotalAmount());
+                customersService.updateCustomer(salesDto.getSale_Cus_Id(), salesDto.getSupplier_uid(), null, null, null, null, salesDto.getSale_TotalAmount());
             } else if (salesDto.getSale_PaymentRec() != 0 && salesDto.getSale_TotalAmount() > salesDto.getSale_PaymentRec()) {
                 paymentStatus = "Partial Payment";
-                customersService.updateCustomer(salesDto.getSale_Cus_Id(), null, null, salesDto.getSale_TotalAmount() - salesDto.getSale_PaymentRec(), null, salesDto.getSale_TotalAmount());
+                customersService.updateCustomer(salesDto.getSale_Cus_Id(), salesDto.getSupplier_uid(), null, null, salesDto.getSale_TotalAmount() - salesDto.getSale_PaymentRec(), null, salesDto.getSale_TotalAmount());
             } else if (salesDto.getSale_PaymentRec() == 0) {
                 paymentStatus = "No Payment";
-                customersService.updateCustomer(salesDto.getSale_Cus_Id(), null, null, salesDto.getSale_TotalAmount(), null, salesDto.getSale_TotalAmount());
+                customersService.updateCustomer(salesDto.getSale_Cus_Id(), salesDto.getSupplier_uid(),null, null, salesDto.getSale_TotalAmount(), null, salesDto.getSale_TotalAmount());
             } else {
                 throw new IllegalArgumentException("Updating Payment Status Failed!!");
             }
@@ -78,7 +78,7 @@ public class SalesService {
 
                 Optional<Product> product = productsRepository.findProductByName(productName);
 
-                productsService.updateProductAvabl(product.get().getProd_Id(), null, Long.valueOf(productQuantity));
+                productsService.updateProductAvabl(product.get().getProd_uid(),salesDto.getSupplier_uid(), null,0.0,0.0, Long.valueOf(productQuantity));
 
             }
 
@@ -87,13 +87,14 @@ public class SalesService {
                     salesDto.getSale_Details().toString(),
                     salesDto.getSale_TotalAmount(),
                     paymentStatus,
-                    salesDto.getSale_PaymentRec()
+                    salesDto.getSale_PaymentRec(),
+                    salesDto.getSupplier_uid()
             );
 
             Sale s = salesRepository.save(sale);
 
             if(s != null){
-                Optional<Customer> cus = customersService.getCustomerById(s.getSale_Cus_Id());
+                Optional<Customer> cus = customersService.getCustomerById(s.getSale_Cus_Id(), s.getSupplier_uid());
                 messageService.sendMessage(cus.get().getCus_mobile(), " Hi ,"+cus.get().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.get().getCus_dueAmount());
                 messageService.sendWhatsappMessage(cus.get().getCus_mobile(), " Hi ,"+cus.get().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.get().getCus_dueAmount());
             }
@@ -102,5 +103,9 @@ public class SalesService {
         }
 
         return response;
+    }
+
+    public List<Sale> getSupplierSales(String supplierUid) {
+        return salesRepository.getSupplierSales(supplierUid);
     }
 }

@@ -22,6 +22,11 @@ public class SalesController {
         return salesService.gatAllSales();
     }
 
+    @GetMapping(path = "{supplier_uid}")
+    public List<Sale> getSupplierSales(@PathVariable("supplier_uid") String supplier_uid){
+        return salesService.getSupplierSales(supplier_uid);
+    }
+
     @PostMapping("newSale")
     public ResponseEntity<String> newSale(@RequestBody SalesDto salesDto) {
         return salesService.addNewSale(salesDto);

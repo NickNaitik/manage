@@ -17,13 +17,36 @@ public class CustomersConfig {
                     "Nick General Strore",
                     "8757394648",
                     "nick@gmail.com",
-                    "CheckPost Argada");
+                    "CheckPost Argada",
+                    "SUP101");
 
             Customer secondCustomer = new Customer("Simran",
                     "Simran General Strore",
                     "8084605228",
                     "simran@gmail.com",
-                    "GM Office, SIRKA");
+                    "GM Office, SIRKA",
+                    "SUP102");
+
+            Customer thirdCustomer = new Customer("Nick",
+                    "Nicky General Strore",
+                    "8757394647",
+                    "nick@gmail.com",
+                    "CheckPost Argada",
+                    "SUP101");
+
+            Customer forthCustomer = new Customer("Nick",
+                    "Nicku General Strore",
+                    "8757394646",
+                    "nick@gmail.com",
+                    "CheckPost Argada",
+                    "SUP101");
+
+            Customer fifthCustomer = new Customer("Nick",
+                    "Simu General Strore",
+                    "8757394645",
+                    "nick@gmail.com",
+                    "CheckPost Argada",
+                    "SUP102");
 
             customersRepository.saveAll(
                     List.of(firstCustomer, secondCustomer)
