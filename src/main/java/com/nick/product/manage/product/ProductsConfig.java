@@ -54,7 +54,7 @@ public class ProductsConfig {
                     "SUP102");
 
             productsRepository.saveAll(
-                    List.of(firstProduct, secondProduct)
+                    List.of(firstProduct, secondProduct, thirdProduct, forthProduct, fifthProduct)
             );
         };
 

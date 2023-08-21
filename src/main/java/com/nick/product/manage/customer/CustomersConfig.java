@@ -49,7 +49,7 @@ public class CustomersConfig {
                     "SUP102");
 
             customersRepository.saveAll(
-                    List.of(firstCustomer, secondCustomer)
+                    List.of(firstCustomer, secondCustomer, thirdCustomer, forthCustomer, fifthCustomer)
             );
         };
 

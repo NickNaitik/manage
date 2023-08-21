@@ -18,17 +18,18 @@ public class SalesController {
     }
 
     @GetMapping("getSales")
-    public List<Sale> getSAllSales(){
+    public ResponseEntity<List<Sale>> getSAllSales(){
         return salesService.gatAllSales();
     }
 
     @GetMapping(path = "{supplier_uid}")
-    public List<Sale> getSupplierSales(@PathVariable("supplier_uid") String supplier_uid){
+    public ResponseEntity<List<Sale>> getSupplierSales(@PathVariable("supplier_uid") String supplier_uid){
         return salesService.getSupplierSales(supplier_uid);
     }
 
     @PostMapping("newSale")
     public ResponseEntity<String> newSale(@RequestBody SalesDto salesDto) {
+        // Validate Request
         return salesService.addNewSale(salesDto);
     }
 

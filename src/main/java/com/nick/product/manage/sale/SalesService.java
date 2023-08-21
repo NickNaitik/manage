@@ -42,8 +42,8 @@ public class SalesService {
         this.salesRepository = salesRepository;
     }
 
-    public List<Sale> gatAllSales() {
-        return salesRepository.findAll();
+    public ResponseEntity<List<Sale>> gatAllSales() {
+        return ResponseEntity.ok().body(salesRepository.findAll());
     }
 
     public ResponseEntity<String> addNewSale(SalesDto salesDto) {
@@ -78,7 +78,7 @@ public class SalesService {
 
                 Optional<Product> product = productsRepository.findProductByName(productName);
 
-                productsService.updateProductAvabl(product.get().getProd_uid(),salesDto.getSupplier_uid(), null,0.0,0.0, Long.valueOf(productQuantity));
+                productsService.updateProduct(product.get().getProd_uid(),salesDto.getSupplier_uid(), null,0.0,0.0, Long.valueOf(productQuantity));
 
             }
 
@@ -94,9 +94,9 @@ public class SalesService {
             Sale s = salesRepository.save(sale);
 
             if(s != null){
-                Optional<Customer> cus = customersService.getCustomerById(s.getSale_Cus_Id(), s.getSupplier_uid());
-                messageService.sendMessage(cus.get().getCus_mobile(), " Hi ,"+cus.get().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.get().getCus_dueAmount());
-                messageService.sendWhatsappMessage(cus.get().getCus_mobile(), " Hi ,"+cus.get().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.get().getCus_dueAmount());
+                ResponseEntity<Customer> cus = customersService.getCustomerById(s.getSale_Cus_Id(), s.getSupplier_uid());
+                messageService.sendMessage(cus.getBody().getCus_mobile(), " Hi ,"+cus.getBody().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.getBody().getCus_dueAmount());
+                messageService.sendWhatsappMessage(cus.getBody().getCus_mobile(), " Hi ,"+cus.getBody().getCus_name()+" Thanks for Choosing us your sale Id : "+s.getSale_Id() + "Sale amount is : "+s.getSale_TotalAmount() + " and your final due amount is : "+cus.getBody().getCus_dueAmount());
             }
 
             response = ResponseEntity.accepted().body("Sale Done!, Your Sale id : " + s.getSale_Id());
@@ -105,7 +105,7 @@ public class SalesService {
         return response;
     }
 
-    public List<Sale> getSupplierSales(String supplierUid) {
-        return salesRepository.getSupplierSales(supplierUid);
+    public ResponseEntity<List<Sale>> getSupplierSales(String supplierUid) {
+        return ResponseEntity.ok().body(salesRepository.getSupplierSales(supplierUid));
     }
 }

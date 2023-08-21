@@ -18,5 +18,8 @@ public interface ProductsRepository extends JpaRepository<Product, Long> {
     List<Product> findSupplierProducts(String supplier_uid);
 
     @Query("SELECT s FROM Product s WHERE s.prod_name = ?1 AND s.supplier_uid =?2")
-    Optional<Product> findProductByNameAndSupplier(String prod_Name, String supplier_uid);
+    Product findProductByNameAndSupplier(String prod_Name, String supplier_uid);
+
+    @Query("SELECT s FROM Product s WHERE s.prod_uid = ?1 AND s.supplier_uid =?2")
+    Product findProductOfSupplier(Long prodId, String supplierUid);
 }

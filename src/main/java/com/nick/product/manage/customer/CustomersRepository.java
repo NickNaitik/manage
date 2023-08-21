@@ -14,12 +14,12 @@ public interface CustomersRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findCustomerByMobile(String cus_mobile);
 
     @Query("SELECT c FROM Customer c WHERE c.supplier_uid = ?1 AND c.cus_uid =?2")
-    Optional<Customer> findCustomerofSupplier(String supplier_uid, Long cus_uid);
+    Customer findCustomerofSupplier(String supplier_uid, Long cus_uid);
 
     @Query("SELECT c FROM Customer c WHERE c.supplier_uid = ?1")
     List<Customer> findSupplierCustomers(String supplier_uid);
 
     @Query("SELECT c FROM Customer c WHERE c.cus_mobile = ?1 AND c.supplier_uid = ?2")
-    Optional<Customer> findCustomerBYMobileAndSupplier(String cus_mobile, String supplier_uid);
+    Customer findCustomerBYMobileAndSupplier(String cus_mobile, String supplier_uid);
 
 }

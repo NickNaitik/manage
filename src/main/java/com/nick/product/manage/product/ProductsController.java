@@ -1,6 +1,7 @@
 package com.nick.product.manage.product;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,32 +19,35 @@ public class ProductsController {
     }
 
     @GetMapping("getAllProducts")
-    public List<Product> getAllProducts(){
+    public ResponseEntity<List<Product>> getAllProducts(){
         return productsService.getAllProducts();
     }
 
     @GetMapping(path = "{supplier_uid}")
-    public List<Product> getSupplierProducts(@PathVariable("supplier_uid") String supplier_uid){
+    public ResponseEntity<List<Product>> getSupplierProducts(@PathVariable("supplier_uid") String supplier_uid){
+        //Validate supplierId
         return productsService.getSupplierProducts(supplier_uid);
     }
 
     @PostMapping("addNewProduct")
-    public String addNewProduct(@RequestBody Product product){
+    public ResponseEntity<String> addNewProduct(@RequestBody Product product){
+        //validate  Request parameters
         return productsService.addNewProduct(product);
     }
 
     @PutMapping(path = "{supplierUid}/{productId}")
-    public String updateProductAvabl(@PathVariable("productId") Long prod_Id,
-                                     @PathVariable(required = true) String supplierUid,
+    public ResponseEntity<String> updateProduct(@PathVariable("productId") Long prod_Id,
+                                     @PathVariable("supplierUid") String supplierUid,
                                      @RequestParam(required = false) Long prod_Available,
                                      @RequestParam(required = false) Double prod_salesPrice,
                                      @RequestParam(required =false) Double prod_costPrice) {
-        return productsService.updateProductAvabl(prod_Id,supplierUid,prod_Available,prod_salesPrice, prod_costPrice,0L);
+        return productsService.updateProduct(prod_Id,supplierUid,prod_Available,prod_salesPrice, prod_costPrice,0L);
     }
 
     @DeleteMapping(path ="{supplierUid}/{productId}")
-    public String deleteProduct(@PathVariable("productId") Long prod_Id) {
-        return productsService.deleteProduct(prod_Id);
+    public ResponseEntity<String> deleteProduct(@PathVariable("productId") Long prod_Id,
+                                                @PathVariable ("supplierUid") String supplierUid) {
+        return productsService.deleteProduct(prod_Id,supplierUid);
     }
 
 

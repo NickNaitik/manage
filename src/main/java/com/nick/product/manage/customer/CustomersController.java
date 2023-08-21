@@ -1,6 +1,7 @@
 package com.nick.product.manage.customer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,18 +20,19 @@ public class CustomersController {
 
     //This method only master user can call, need to write logic or any authorization things
     @GetMapping("getAllCustomers")
-    public List<Customer> getAllCustomers(){
+    public ResponseEntity<List<Customer>> getAllCustomers(){
         return customersService.getAllCustomer();
     }
 
     //Suppliers can see all the customers under them only
     @GetMapping(path = "{supplier_uid}")
-    public List<Customer> getSupplierCustomers(@PathVariable("supplier_uid") String supplier_uid){
+    public ResponseEntity<List<Customer>> getSupplierCustomers(@PathVariable("supplier_uid") String supplier_uid){
+        // Validate SupplierId
         return customersService.getSupplierCustomers(supplier_uid);
     }
 
     @GetMapping(path = "/{supplierUid}/{customerUid}")
-    public Optional<Customer> getCustomerById(@PathVariable("customerUid") Long cus_uid,
+    public ResponseEntity<Customer> getCustomerById(@PathVariable("customerUid") Long cus_uid,
                                               @PathVariable("supplierUid") String supplier_uid) {
 
         return customersService.getCustomerById(cus_uid, supplier_uid);
@@ -38,12 +40,13 @@ public class CustomersController {
     }
 
     @PostMapping("regCustomer")
-    public String registerNewCustomer(@RequestBody Customer customer){
+    public ResponseEntity<String> registerNewCustomer(@RequestBody Customer customer){
+        // validate request Body
         return customersService.addNewCustomer(customer);
     }
 
     @PutMapping(path = "/{supplierUid}/{customerUid}")
-    public String updateCustomer(@PathVariable("supplierUid") String supplier_uid,
+    public ResponseEntity<String> updateCustomer(@PathVariable("supplierUid") String supplier_uid,
                                  @PathVariable("customerUid") Long cus_Id,
                                  @RequestParam(required = false) String cus_mobile,
                                  @RequestParam(required = false) String cus_email,
@@ -55,8 +58,8 @@ public class CustomersController {
     }
 
     @DeleteMapping(path ="{supplierUid}/{customerUid}")
-    public String deleteCustomer(@PathVariable("customerUid") Long cus_Id,
-                                 @PathVariable("supplierUid") String supplier_uid){
+    public ResponseEntity<String> deleteCustomer(@PathVariable("customerUid") Long cus_Id,
+                                         @PathVariable("supplierUid") String supplier_uid){
         return customersService.deleteCustomer(cus_Id, supplier_uid);
     }
 
