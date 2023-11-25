@@ -1,17 +1,14 @@
-package com.nick.product.manage.sale;
+package com.nick.product.manage.Util;
 
-import com.nick.product.manage.customer.Customer;
-import com.nick.product.manage.customer.CustomersRepository;
-import com.nick.product.manage.product.Product;
-import com.nick.product.manage.product.ProductsRepository;
+import com.nick.product.manage.Dto.SalesDto;
+import com.nick.product.manage.Entity.Product;
+import com.nick.product.manage.Repository.CustomersRepository;
+import com.nick.product.manage.Repository.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class SaleValidator {

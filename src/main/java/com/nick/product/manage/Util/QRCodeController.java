@@ -1,4 +1,4 @@
-package com.nick.product.manage.services;
+package com.nick.product.manage.Util;
 
 import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;

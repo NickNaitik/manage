@@ -1,12 +1,13 @@
-package com.nick.product.manage.product;
+package com.nick.product.manage.Services.supplierOperations;
 
+import com.nick.product.manage.Entity.Product;
+import com.nick.product.manage.Repository.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductsService {

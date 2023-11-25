@@ -1,4 +1,4 @@
-package com.nick.product.manage.sale;
+package com.nick.product.manage.Dto;
 
 import org.springframework.stereotype.Component;
 

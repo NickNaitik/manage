@@ -1,11 +1,15 @@
-package com.nick.product.manage.sale;
+package com.nick.product.manage.Services.supplierOperations;
 
-import com.nick.product.manage.customer.Customer;
-import com.nick.product.manage.customer.CustomersService;
-import com.nick.product.manage.product.Product;
-import com.nick.product.manage.product.ProductsRepository;
-import com.nick.product.manage.product.ProductsService;
-import com.nick.product.manage.services.MessageService;
+import com.nick.product.manage.Entity.Customer;
+import com.nick.product.manage.Entity.Product;
+import com.nick.product.manage.Entity.Sale;
+import com.nick.product.manage.Repository.SalesRepository;
+import com.nick.product.manage.Repository.ProductsRepository;
+import com.nick.product.manage.Services.supplierOperations.CustomersService;
+import com.nick.product.manage.Services.supplierOperations.ProductsService;
+import com.nick.product.manage.Util.SaleValidator;
+import com.nick.product.manage.Dto.SalesDto;
+import com.nick.product.manage.Util.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,7 @@ public class SalesService {
     @Autowired
     private SalesDto salesDto;
 
+    @Autowired
     private SalesRepository salesRepository;
 
     @Autowired
