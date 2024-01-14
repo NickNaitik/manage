@@ -19,28 +19,28 @@ public class SupplierConfig {
                     "SUP101",
                     "First Supplier",
                     "firstsupplier@gmail.com",
-                    "user",
+                    "user1",
                     "6687988767889");
 
             Supplier secondSupplier = new Supplier("Master_01",
                     "SUP102",
                     "Second Supplier",
                     "secondsupplier@gmail.com",
-                    "user",
+                    "user2",
                     "797767578789");
 
             Supplier thirdSupplier = new Supplier("Master_01",
                     "SUP103",
                     "Third Supplier",
                     "thirdsupplier@gmail.com",
-                    "user",
+                    "user3",
                     "7688977999");
 
             Supplier forthSupplier = new Supplier("Master_02",
                     "SUP104",
                     "Forth Supplier",
                     "forthsupplier@gmail.com",
-                    "user",
+                    "user4",
                     "5679886897");
 
             Supplier fifthSupplier = new Supplier("Master_02",
