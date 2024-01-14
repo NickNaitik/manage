@@ -1,5 +1,6 @@
 package com.nick.product.manage.Security;
 
+import com.nick.product.manage.Repository.TokenRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -45,7 +49,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         userId = jwtService.extractUserId(jwt);
         if(userId != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-            if(jwtService.isTokenValid(jwt,userDetails)){
+            var isTokenValid = tokenRepository.findByToken(jwt)
+                    .map(t -> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+            if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)

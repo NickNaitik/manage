@@ -29,7 +29,7 @@ public class ApplicationConfig {
     }
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> suppliersRepository.getSupplierById(username).orElseThrow(() -> new UsernameNotFoundException("User not found !!"));
+        return username -> suppliersRepository.getSupplierById(username);
     }
 
 //    @Bean

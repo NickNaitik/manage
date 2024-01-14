@@ -25,11 +25,11 @@ public class MasterService {
         return ResponseEntity.ok().body(suppliersRepository.getSuppliers(master_uid));
     }
 
-    public ResponseEntity<String> addSupplier(Supplier supplier) {
-        //validate Request parameters using validator class create a method in validation class
-        Supplier s = suppliersRepository.save(supplier);
-        return ResponseEntity.accepted().body("Supplier added successfully! , Please note the supplier Id : " +s.getSupplier_uid() + "and Supplier auto generated password is : "+s.getSupplier_password());
-    }
+//    public ResponseEntity<String> addSupplier(Supplier supplier) {
+//        //validate Request parameters using validator class create a method in validation class
+//        Supplier s = suppliersRepository.save(supplier);
+//        return ResponseEntity.accepted().body("Supplier added successfully! , Please note the supplier Id : " +s.getSupplier_uid() + "and Supplier auto generated password is : "+s.getSupplier_password());
+//    }
     //update supplier Details
 
 
