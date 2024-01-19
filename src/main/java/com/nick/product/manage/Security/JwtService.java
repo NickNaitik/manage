@@ -1,10 +1,12 @@
 package com.nick.product.manage.Security;
 
+import com.nick.product.manage.Excption.CustomException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +19,17 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    @Value("${jwt-secret-key}")
+    private String secretKey;
+
+    @Value("${jwt-access-token-expiration}")
+    private long accessTokenExpiration;
+
+    @Value("${jwt-refresh-token-expiration}")
+    private long refreshTokenExpiration;
+
     //Use this - https://www.devglan.com/online-tools/hmac-sha256-online
-    private static final String secretKey = "80a7da39b9502adda3b098483f267e293fe631ad9c9be482e5fc13f641d65cc7";
+    //private static final String secretKey = "80a7da39b9502adda3b098483f267e293fe631ad9c9be482e5fc13f641d65cc7";
 
     public String extractUserId(String jwt) {
         return  extractClaim(jwt, Claims::getSubject);
@@ -48,14 +59,25 @@ public class JwtService {
         return generateToken( new HashMap<>(), userDetails);
     }
 
+    public String generateRefreshToken(
+            UserDetails userDetails) {
+
+        return buildToken(new HashMap<>(), userDetails, refreshTokenExpiration);
+    }
+
     public String generateToken(
             Map<String, Object> extraClaims,
             UserDetails userDetails) {
         System.out.println("AAYA GENERATE TOKEN PR ");
+        return buildToken(extraClaims, userDetails, accessTokenExpiration);
+    }
+
+    private  String buildToken(Map<String, Object> extraClaims,
+                               UserDetails userDetails, long expiration){
         return Jwts.builder().setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+3600000))
+                .setExpiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -67,7 +89,6 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-
         System.out.println("Checking Expiration!!");
         return extractExpiration(token).before(new Date());
     }
