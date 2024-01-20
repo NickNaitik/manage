@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.nick.product.manage.Entity.Supplier;
 import com.nick.product.manage.Services.AuthenticationService;
 import com.nick.product.manage.Token.Token;
+import com.nick.product.manage.Token.TokenRequest;
 import com.nick.product.manage.Token.TokenResponse;
 import com.nick.product.manage.Token.TokenType;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,9 @@ public class AuthController {
     AuthenticationService authenticationService;
 
     @PostMapping("/accessToken")
-    public ResponseEntity<TokenResponse> getToken(@RequestBody JsonNode request) {
-        String supplierId = String.valueOf(request.get("supplier_Id"));
-        String supplierPassword = String.valueOf(request.get("supplier_Password"));
+    public ResponseEntity<TokenResponse> getToken(@RequestBody TokenRequest request) {
+        String supplierId = String.valueOf(request.getSupplier_Id());
+        String supplierPassword = String.valueOf(request.getSupplier_Password());
         String accessToken = authenticationService.generateAccessToken(supplierId, supplierPassword);
         String refreshToken = authenticationService.generateRefreshToken(supplierId, supplierPassword);
 

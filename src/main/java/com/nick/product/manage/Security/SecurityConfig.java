@@ -11,10 +11,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@EnableWebMvc
 public class SecurityConfig {
 
     @Autowired
@@ -31,7 +33,14 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeRequests()
-                .regexMatchers("/api/v1/accessToken", "/api/v1/logout", "/api/v1/refreshToken")
+                .antMatchers("/api/v1/accessToken",
+                        "/api/v1/logout",
+                        "/api/v1/refreshToken",
+                        "/v3/api-docs",
+                        "/v3/api-docs/**", //This one is important
+                        "/swagger-ui/**",
+                        "/swagger-resources/**",
+                        "/webjars/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated().and()
