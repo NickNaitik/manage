@@ -17,6 +17,11 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
 """)
     List<Token> findAllValidTokenBySupplier(String supplier_uid);
 
+    @Query("""
+    select t from Token t inner join Supplier s on t.supplier.supplier_uid = s.supplier_uid 
+    where s.supplier_uid = :supplier_uid and (t.expired= false or t.revoked = false or t.tokenType = 'BEARER' )
+""")
+    List<Token> findValidAccessTokenBySupplier(String supplier_uid);
     Optional<Token> findByToken(String token);
 }
 

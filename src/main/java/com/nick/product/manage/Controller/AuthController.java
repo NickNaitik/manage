@@ -1,32 +1,45 @@
 package com.nick.product.manage.Controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.nick.product.manage.Entity.Supplier;
 import com.nick.product.manage.Services.AuthenticationService;
 import com.nick.product.manage.Token.Token;
 import com.nick.product.manage.Token.TokenRequest;
 import com.nick.product.manage.Token.TokenResponse;
 import com.nick.product.manage.Token.TokenType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "AUTHENTICATION CONTROLLER")
 public class AuthController {
 
     @Autowired
     AuthenticationService authenticationService;
 
+    @Operation(
+            description = "Endpoint to generate the Token",
+            summary = "Without this token you can't make any request",
+            responses = {
+                    @ApiResponse(
+                            description = "Success",
+                            responseCode = "200"
+                    ),
+                    @ApiResponse(
+                            description = "Invalid User name & Password",
+                            responseCode = "401"
+                    )
+            }
+    )
     @PostMapping("/accessToken")
     public ResponseEntity<TokenResponse> getToken(@RequestBody TokenRequest request) {
         String supplierId = String.valueOf(request.getSupplier_Id());
@@ -65,12 +78,20 @@ public class AuthController {
         return null;
     }
 
+//    @PostMapping("/refreshToken")
+//    @SecurityRequirement(name = "bearerAuth")
+//    public void getTokenfromRefreshToken(
+//            HttpServletRequest request,
+//            HttpServletResponse response
+//    ) throws IOException {
+//        authenticationService.refreshToken(request, response);
+//    }
+
     @PostMapping("/refreshToken")
-    public void getTokenfromRefreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        authenticationService.refreshToken(request, response);
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<TokenResponse> getNewAccessTokenFromRefreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken
+                                         ) throws IOException {
+        return authenticationService.refreshToken(refreshToken);
     }
 
 }

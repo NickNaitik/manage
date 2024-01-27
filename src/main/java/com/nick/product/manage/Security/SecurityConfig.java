@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/accessToken",
                         "/api/v1/logout",
                         "/api/v1/refreshToken",
+                        "/api/v1/getRefreshToken",
                         "/v3/api-docs",
                         "/v3/api-docs/**", //This one is important
                         "/swagger-ui/**",
