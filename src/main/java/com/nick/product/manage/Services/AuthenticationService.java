@@ -9,6 +9,9 @@ import com.nick.product.manage.Security.JwtService;
 import com.nick.product.manage.Token.Token;
 import com.nick.product.manage.Token.TokenResponse;
 import com.nick.product.manage.Token.TokenType;
+import com.nick.product.manage.Token.VerificationRequest;
+import com.nick.product.manage.tfa.TwoFactorAuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,15 +29,17 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
     private final SuppliersRepository suppliersRepository;
 
     private final TokenRepository tokenRepository;
+    private final TwoFactorAuthenticationService twoFactorAuthenticationService;
 
-    public AuthenticationService(SuppliersRepository suppliersRepository, TokenRepository tokenRepository) {
-        this.suppliersRepository =suppliersRepository;
-        this.tokenRepository = tokenRepository;
-    }
+//    public AuthenticationService(SuppliersRepository suppliersRepository, TokenRepository tokenRepository) {
+//        this.suppliersRepository =suppliersRepository;
+//        this.tokenRepository = tokenRepository;
+//    }
 
     @Autowired
     private JwtService jwtService;
@@ -182,5 +187,25 @@ public class AuthenticationService {
             }
         }
         return ResponseEntity.badRequest().body(null);
+    }
+
+    public TokenResponse verify(VerificationRequest verificationRequest) {
+        //Supplier supplier = suppliersRepository.getSupplierByEmail(verificationRequest.getEmail());
+        Optional<Supplier> supplier = suppliersRepository.findById(verificationRequest.getSupplier_id());
+        if(supplier.isEmpty()){
+            throw new CustomException("Supplier not found with supplier Id : "+verificationRequest.getSupplier_id());
+        }
+
+        if(twoFactorAuthenticationService.isOtpNotValid(supplier.get().getSecret(), verificationRequest.getCode())) {
+            throw new CustomException("Code is not correct");
+        }
+        var accessToken = jwtService.generateToken(supplier.get());
+        var refreshToken = jwtService.generateRefreshToken(supplier.get());
+
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .twoFactorEnabled(supplier.get().getTwoFactorEnabled())
+                .build();
     }
 }

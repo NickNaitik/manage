@@ -2,10 +2,8 @@ package com.nick.product.manage.Controller;
 
 import com.nick.product.manage.Entity.Supplier;
 import com.nick.product.manage.Services.AuthenticationService;
-import com.nick.product.manage.Token.Token;
-import com.nick.product.manage.Token.TokenRequest;
-import com.nick.product.manage.Token.TokenResponse;
-import com.nick.product.manage.Token.TokenType;
+import com.nick.product.manage.Token.*;
+import com.nick.product.manage.tfa.TwoFactorAuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,6 +24,8 @@ public class AuthController {
     @Autowired
     AuthenticationService authenticationService;
 
+    private final TwoFactorAuthenticationService twoFactorAuthenticationService;
+
     @Operation(
             description = "Endpoint to generate the Token",
             summary = "Without this token you can't make any request",
@@ -40,16 +40,29 @@ public class AuthController {
                     )
             }
     )
+
     @PostMapping("/accessToken")
     public ResponseEntity<TokenResponse> getToken(@RequestBody TokenRequest request) {
         String supplierId = String.valueOf(request.getSupplier_Id());
         String supplierPassword = String.valueOf(request.getSupplier_Password());
+        Supplier supplier = authenticationService.getSupplierById(supplierId);
+
+        System.out.println("2 FA : "+supplier.getTwoFactorEnabled());
+        //If two factor enabled then it will not give tokens and instead go for 2FA flow
+        if(supplier.getTwoFactorEnabled()){
+            TokenResponse tokenResponse = TokenResponse.builder()
+                    .accessToken("")
+                    .refreshToken("")
+                    .twoFactorEnabled(supplier.getTwoFactorEnabled())
+                    .build();
+
+            return ResponseEntity.ok(tokenResponse);
+        }
         String accessToken = authenticationService.generateAccessToken(supplierId, supplierPassword);
         String refreshToken = authenticationService.generateRefreshToken(supplierId, supplierPassword);
 
         if(accessToken !=  null && refreshToken != null) {
 
-            Supplier supplier = authenticationService.getSupplierById(supplierId);
             authenticationService.revokeAllUserTokens(supplier);
 
             Token access = Token.builder()
@@ -70,9 +83,12 @@ public class AuthController {
             authenticationService.saveToken(access);
             authenticationService.saveToken(refresh);
             supplier.setToken(access);
+            TokenResponse tokenResponse = TokenResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .twoFactorEnabled(false)
+                    .build();
 
-            TokenResponse tokenResponse = TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
-            //return ResponseEntity.ok(jwt);
             return ResponseEntity.ok(tokenResponse);
         }
         return null;
@@ -92,6 +108,13 @@ public class AuthController {
     public ResponseEntity<TokenResponse> getNewAccessTokenFromRefreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken
                                          ) throws IOException {
         return authenticationService.refreshToken(refreshToken);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyCode(@RequestBody VerificationRequest verificationRequest){
+
+        return ResponseEntity.ok(authenticationService.verify(verificationRequest));
+
     }
 
 }

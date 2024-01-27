@@ -19,6 +19,12 @@ public interface SuppliersRepository extends JpaRepository<Supplier, String> {
     @Query("SELECT s FROM Supplier s WHERE s.supplier_uid = ?1")
     Supplier getSupplierById(String supplier_uid);
 
+    @Query("SELECT s FROM Supplier s WHERE s.supplier_mobile = ?1")
+    Supplier getSupplierByMobile(String supplier_mobile);
+
+    @Query("SELECT s FROM Supplier s WHERE s.supplier_email = ?1")
+    Supplier getSupplierByEmail(String supplier_email);
+
     @Query("SELECT s FROM Supplier s WHERE s.supplier_uid = ?1 AND s.supplier_password = ?2")
     Optional<Supplier> getSupplierByIdAndPassword(String supplier_uid, String supplier_password);
 

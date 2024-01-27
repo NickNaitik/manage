@@ -12,7 +12,11 @@ public class GlobalHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<String> handleCustomError(CustomException ce){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User Name or Password is Wrong!");
+
+        if(ce.getMessage() == null)
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User Name or Password is Wrong!");
+        else
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ce.getMessage());
     }
 
 }

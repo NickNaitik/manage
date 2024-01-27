@@ -15,14 +15,14 @@ public class MasterConfig {
     CommandLineRunner masterCommandLineRunner(MastersRepository mastersRepository){
 
         return args -> {
-            Master firstMaster = new Master("Master_01",
+            Master firstMaster = new Master("MAS01",
                     "First Master",
                     "firstmaster@gmail.com",
                     "9162705815",
                     "admin",
                     0);
 
-            Master secondMaster = new Master("Master_02",
+            Master secondMaster = new Master("MAS02",
                     "Second Master",
                     "secondmaster@gmail.com",
                     "9162705814",

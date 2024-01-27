@@ -2,35 +2,60 @@ package com.nick.product.manage.Services.masterOperations;
 
 import com.nick.product.manage.Entity.Supplier;
 import com.nick.product.manage.Repository.SuppliersRepository;
+import com.nick.product.manage.Services.AuthenticationService;
+import com.nick.product.manage.Token.Token;
+import com.nick.product.manage.Token.TokenResponse;
+import com.nick.product.manage.Token.TokenType;
+import com.nick.product.manage.tfa.TwoFactorAuthenticationService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class MasterService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MasterService.class);
+    @Autowired
+    AuthenticationService authenticationService;
+
+    private final TwoFactorAuthenticationService twoFactorAuthenticationService;
 
     private final SuppliersRepository suppliersRepository;
-
-    @Autowired
-    public MasterService(SuppliersRepository suppliersRepository) {
-        this.suppliersRepository = suppliersRepository;
-    }
 
     public ResponseEntity<List<Supplier>> getSuppliers(String master_uid) {
         return ResponseEntity.ok().body(suppliersRepository.getSuppliers(master_uid));
     }
 
-//    public ResponseEntity<String> addSupplier(Supplier supplier) {
-//        //validate Request parameters using validator class create a method in validation class
-//        Supplier s = suppliersRepository.save(supplier);
-//        return ResponseEntity.accepted().body("Supplier added successfully! , Please note the supplier Id : " +s.getSupplier_uid() + "and Supplier auto generated password is : "+s.getSupplier_password());
-//    }
-    //update supplier Details
+    public ResponseEntity<?> addSupplier(Supplier supplier, String master_uid) {
+        //validate Request parameters using validator class create a method in validation class
 
+        Supplier supm = suppliersRepository.getSupplierByMobile(supplier.getSupplier_mobile());
+        if(supm != null){
+            return ResponseEntity.badRequest().body("Supplier with this mobile number already present");
+        }
+
+        supplier.setMaster_uid(master_uid);
+        supplier.setSupplier_password(UUID.randomUUID().toString());
+        suppliersRepository.save(supplier);
+
+        if(supplier.getTwoFactorEnabled()) {
+            TokenResponse tokenResponse = TokenResponse.builder()
+                    .message("Supplier added successfully! , Please note the supplier Id : " +supplier.getSupplier_uid() + " and Supplier auto generated password is : "+supplier.getSupplier_password())
+                    .secretImageUri(twoFactorAuthenticationService.generateQRCodeImageUri(supplier.getSecret()))
+                    .build();
+            return ResponseEntity.ok(tokenResponse);
+        } else {
+            TokenResponse tokenResponse = TokenResponse.builder()
+                    .message("Supplier added successfully! , Please note the supplier Id : " +supplier.getSupplier_uid() + " and Supplier auto generated password is : "+supplier.getSupplier_password())
+                    .build();
+            return ResponseEntity.ok(tokenResponse);
+        }
+
+    }
 
 }

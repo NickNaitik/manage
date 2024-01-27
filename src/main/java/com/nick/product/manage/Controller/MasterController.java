@@ -18,14 +18,14 @@ public class MasterController {
         this.masterService = masterService;
     }
 
-//    @GetMapping(path = "{master_uid}/getSupplier")
-//    public ResponseEntity<List<Supplier>> getSupppliers(@PathVariable("master_uid") String master_uid){
-//        return masterService.getSuppliers(master_uid);
-//    }
+    @GetMapping(path = "{master_uid}/getSupplier")
+    public ResponseEntity<List<Supplier>> getSupppliers(@PathVariable("master_uid") String master_uid){
+        return masterService.getSuppliers(master_uid);
+    }
 
-//    @PostMapping(path = "{master_uid}/addSupplier")
-//    public ResponseEntity<String> addSupplier(@RequestBody Supplier supplier){
-//        return masterService.addSupplier(supplier);
-//    }
+    @PostMapping(path = "{master_uid}/addSupplier")
+    public ResponseEntity<?> addSupplier(@RequestBody Supplier supplier, @PathVariable("master_uid") String master_uid){
+        return masterService.addSupplier(supplier, master_uid);
+    }
 
 }

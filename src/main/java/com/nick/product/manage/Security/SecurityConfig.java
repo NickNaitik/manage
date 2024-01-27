@@ -37,6 +37,8 @@ public class SecurityConfig {
                         "/api/v1/logout",
                         "/api/v1/refreshToken",
                         "/api/v1/getRefreshToken",
+                        "/api/v1/*/addSupplier",
+                        "/api/v1/*/getSupplier",
                         "/v3/api-docs",
                         "/v3/api-docs/**", //This one is important
                         "/swagger-ui/**",

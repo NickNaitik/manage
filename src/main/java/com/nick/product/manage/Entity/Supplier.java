@@ -28,6 +28,8 @@ public class Supplier implements UserDetails {
     private String supplier_password;
     private String supplier_mobile;
     private Integer supplier_customers;
+    private Boolean twoFactorEnabled;
+    private String secret;
 
 
     public Supplier(String master_uid, String supplier_uid, String supplier_name, String supplier_email, String supplier_password, String supplier_mobile) {
@@ -37,6 +39,15 @@ public class Supplier implements UserDetails {
         this.supplier_email = supplier_email;
         this.supplier_password = supplier_password;
         this.supplier_mobile = supplier_mobile;
+    }
+    public Supplier(String master_uid, String supplier_uid, String supplier_name, String supplier_email, String supplier_password, String supplier_mobile, Boolean twoFactorEnabled) {
+        this.master_uid = master_uid;
+        this.supplier_uid = supplier_uid;
+        this.supplier_name = supplier_name;
+        this.supplier_email = supplier_email;
+        this.supplier_password = supplier_password;
+        this.supplier_mobile = supplier_mobile;
+        this.twoFactorEnabled = twoFactorEnabled;
     }
 
     @Override
