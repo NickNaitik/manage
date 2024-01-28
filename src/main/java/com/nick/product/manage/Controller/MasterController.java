@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1")
+@CrossOrigin("*")
 public class MasterController {
 
     private final MasterService masterService;

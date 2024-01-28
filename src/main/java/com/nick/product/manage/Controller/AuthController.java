@@ -19,6 +19,7 @@ import java.io.IOException;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 @Tag(name = "AUTHENTICATION CONTROLLER")
+@CrossOrigin("*")
 public class AuthController {
 
     @Autowired
@@ -45,8 +46,11 @@ public class AuthController {
     public ResponseEntity<TokenResponse> getToken(@RequestBody TokenRequest request) {
         String supplierId = String.valueOf(request.getSupplier_Id());
         String supplierPassword = String.valueOf(request.getSupplier_Password());
+        System.out.println("Supplier_id : "+supplierId);
+        System.out.println("supplier_password : "+supplierPassword);
         Supplier supplier = authenticationService.getSupplierById(supplierId);
 
+        authenticationService.revokeAllUserTokens(supplier);
         System.out.println("2 FA : "+supplier.getTwoFactorEnabled());
         //If two factor enabled then it will not give tokens and instead go for 2FA flow
         if(supplier.getTwoFactorEnabled()){
@@ -58,38 +62,40 @@ public class AuthController {
 
             return ResponseEntity.ok(tokenResponse);
         }
-        String accessToken = authenticationService.generateAccessToken(supplierId, supplierPassword);
-        String refreshToken = authenticationService.generateRefreshToken(supplierId, supplierPassword);
+        else {
+            String accessToken = authenticationService.generateAccessToken(supplierId, supplierPassword);
+            String refreshToken = authenticationService.generateRefreshToken(supplierId, supplierPassword);
 
-        if(accessToken !=  null && refreshToken != null) {
+            if (accessToken != null && refreshToken != null) {
 
-            authenticationService.revokeAllUserTokens(supplier);
+                authenticationService.revokeAllUserTokens(supplier);
 
-            Token access = Token.builder()
-                    .supplier(supplier)
-                    .token(accessToken)
-                    .revoked(false)
-                    .expired(false)
-                    .tokenType(TokenType.BEARER)
-                    .build();
-            Token refresh = Token.builder()
-                    .supplier(supplier)
-                    .token(refreshToken)
-                    .revoked(false)
-                    .expired(false)
-                    .tokenType(TokenType.REFRESH)
-                    .build();
+                Token access = Token.builder()
+                        .supplier(supplier)
+                        .token(accessToken)
+                        .revoked(false)
+                        .expired(false)
+                        .tokenType(TokenType.BEARER)
+                        .build();
+                Token refresh = Token.builder()
+                        .supplier(supplier)
+                        .token(refreshToken)
+                        .revoked(false)
+                        .expired(false)
+                        .tokenType(TokenType.REFRESH)
+                        .build();
 
-            authenticationService.saveToken(access);
-            authenticationService.saveToken(refresh);
-            supplier.setToken(access);
-            TokenResponse tokenResponse = TokenResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .twoFactorEnabled(false)
-                    .build();
+                authenticationService.saveToken(access);
+                authenticationService.saveToken(refresh);
+                supplier.setToken(access);
+                TokenResponse tokenResponse = TokenResponse.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .twoFactorEnabled(false)
+                        .build();
 
-            return ResponseEntity.ok(tokenResponse);
+                return ResponseEntity.ok(tokenResponse);
+            }
         }
         return null;
     }

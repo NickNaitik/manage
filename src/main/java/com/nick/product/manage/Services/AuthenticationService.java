@@ -199,12 +199,30 @@ public class AuthenticationService {
         if(twoFactorAuthenticationService.isOtpNotValid(supplier.get().getSecret(), verificationRequest.getCode())) {
             throw new CustomException("Code is not correct");
         }
+        revokeAllUserTokens(supplier.get());
         var accessToken = jwtService.generateToken(supplier.get());
         var refreshToken = jwtService.generateRefreshToken(supplier.get());
 
+        Token access = Token.builder()
+                .supplier(supplier.get())
+                .token(accessToken)
+                .revoked(false)
+                .expired(false)
+                .tokenType(TokenType.BEARER)
+                .build();
+        Token refresh = Token.builder()
+                .supplier(supplier.get())
+                .token(refreshToken)
+                .revoked(false)
+                .expired(false)
+                .tokenType(TokenType.REFRESH)
+                .build();
+        tokenRepository.save(access);
+        tokenRepository.save(refresh);
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .message("Verified Successfully !!, Redirecting in 3 Seconds..")
                 .twoFactorEnabled(supplier.get().getTwoFactorEnabled())
                 .build();
     }

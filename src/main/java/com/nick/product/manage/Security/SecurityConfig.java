@@ -32,6 +32,8 @@ public class SecurityConfig {
         httpSecurity
                 .csrf()
                 .disable()
+                .cors()
+                .disable()
                 .authorizeRequests()
                 .antMatchers("/api/v1/accessToken",
                         "/api/v1/logout",
@@ -39,6 +41,7 @@ public class SecurityConfig {
                         "/api/v1/getRefreshToken",
                         "/api/v1/*/addSupplier",
                         "/api/v1/*/getSupplier",
+                        "/api/v1/verify",
                         "/v3/api-docs",
                         "/v3/api-docs/**", //This one is important
                         "/swagger-ui/**",

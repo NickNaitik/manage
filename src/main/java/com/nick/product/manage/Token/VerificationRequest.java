@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Data
-@Builder
-@AllArgsConstructor
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class VerificationRequest {
 
     private String email;
