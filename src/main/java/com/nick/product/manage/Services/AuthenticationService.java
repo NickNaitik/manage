@@ -36,31 +36,25 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final TwoFactorAuthenticationService twoFactorAuthenticationService;
 
-//    public AuthenticationService(SuppliersRepository suppliersRepository, TokenRepository tokenRepository) {
-//        this.suppliersRepository =suppliersRepository;
-//        this.tokenRepository = tokenRepository;
-//    }
 
     @Autowired
     private JwtService jwtService;
 
     public String generateAccessToken(String supplierId, String supplierPassword) {
+        //Below line call is not needed as we are doing this check in controller
         Optional<Supplier> supplier = suppliersRepository.getSupplierByIdAndPassword(supplierId, supplierPassword);
         String jwtToken =null;
         if(supplier.isPresent()) {
             jwtToken = jwtService.generateToken(supplier.get());
-        } else {
-            throw new CustomException("Username and Password is wrong!");
         }
         return jwtToken;
     }
     public String generateRefreshToken(String supplierId, String supplierPassword) {
+        //Below line call is not needed as we are doing this check in controller
         Optional<Supplier> supplier = suppliersRepository.getSupplierByIdAndPassword(supplierId, supplierPassword);
         String jwtToken =null;
         if(supplier.isPresent()) {
             jwtToken = jwtService.generateRefreshToken(supplier.get());
-        } else {
-            throw new CustomException("Username and Password is wrong!");
         }
         return jwtToken;
     }
@@ -76,7 +70,7 @@ public class AuthenticationService {
         tokenRepository.saveAll(validSupplierToken);
     }
 
-    public void revokeAccessUserTokens(Supplier supplier){
+    public void revokeAccessUserTokens(Supplier supplier) {
         var validSupplierToken = tokenRepository.findValidAccessTokenBySupplier(supplier.getSupplier_uid());
         if(validSupplierToken.isEmpty())
             return;
@@ -87,16 +81,18 @@ public class AuthenticationService {
         tokenRepository.saveAll(validSupplierToken);
     }
 
-    public Supplier getSupplierById(String id){
-        return suppliersRepository.getSupplierById(id);
+    public Supplier getSupplierByIdAndPassword(String id, String password){
+        try {
+            Optional<Supplier> supplier = suppliersRepository.getSupplierByIdAndPassword(id, password);
+            return supplier.get();
+        } catch (Exception ex){
+            throw new CustomException("Invalid username & Password!");
+        }
 
     }
 
-    public Token saveToken(Token token){
-        return tokenRepository.save(token);
-    }
 
-    public void refreshToken(HttpServletRequest request,
+/*    public void refreshToken(HttpServletRequest request,
                              HttpServletResponse response) throws IOException {
 
         final String authHeader = request.getHeader("Authorization");
@@ -126,7 +122,7 @@ public class AuthenticationService {
                         .token(newAccessToken)
                         .revoked(false)
                         .expired(false)
-                        .tokenType(TokenType.BEARER)
+                        .tokenType(TokenType.ACCESS)
                         .build();
                 tokenRepository.save(token);
                 TokenResponse tokenResponse = TokenResponse.builder()
@@ -142,7 +138,7 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), tokenResponse);
             }
         }
-    }
+    }*/
 
     public ResponseEntity<TokenResponse> refreshToken(String refresh) {
 
@@ -161,7 +157,7 @@ public class AuthenticationService {
             var isTokenValid = tokenRepository.findByToken(refreshToken)
                     .map(t -> !t.isExpired() && !t.isRevoked())
                     .orElse(false);
-            if(jwtService.isTokenValid(refreshToken,userDetails) && isTokenValid) {
+            if(jwtService.isTokenValid(refreshToken,userDetails) && isTokenValid && !jwtService.isTokenTypeAccess(refreshToken)) {
 
                 //Revoking all active access token
                 revokeAccessUserTokens(supplier);
@@ -172,9 +168,9 @@ public class AuthenticationService {
                         .token(newAccessToken)
                         .revoked(false)
                         .expired(false)
-                        .tokenType(TokenType.BEARER)
+                        .tokenType(TokenType.ACCESS)
                         .build();
-                tokenRepository.save(token);
+                saveToken(token);
                 TokenResponse tokenResponse = TokenResponse.builder()
                         .refreshToken(refreshToken)
                         .accessToken(newAccessToken)
@@ -208,7 +204,7 @@ public class AuthenticationService {
                 .token(accessToken)
                 .revoked(false)
                 .expired(false)
-                .tokenType(TokenType.BEARER)
+                .tokenType(TokenType.ACCESS)
                 .build();
         Token refresh = Token.builder()
                 .supplier(supplier.get())
@@ -217,13 +213,17 @@ public class AuthenticationService {
                 .expired(false)
                 .tokenType(TokenType.REFRESH)
                 .build();
-        tokenRepository.save(access);
-        tokenRepository.save(refresh);
+        saveToken(access);
+        saveToken(refresh);
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .message("Verified Successfully !!, Redirecting in 3 Seconds..")
                 .twoFactorEnabled(supplier.get().getTwoFactorEnabled())
                 .build();
+    }
+
+    public void saveToken(Token token) {
+        tokenRepository.save(token);
     }
 }

@@ -1,11 +1,16 @@
 package com.nick.product.manage.Security;
 
 import com.nick.product.manage.Excption.CustomException;
+import com.nick.product.manage.Repository.TokenRepository;
+import com.nick.product.manage.Token.Token;
+import com.nick.product.manage.Token.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -14,9 +19,11 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
     @Value("${jwt-secret-key}")
@@ -27,6 +34,10 @@ public class JwtService {
 
     @Value("${jwt-refresh-token-expiration}")
     private long refreshTokenExpiration;
+
+    @Autowired
+    private TokenRepository tokenRepository;
+
 
     //Use this - https://www.devglan.com/online-tools/hmac-sha256-online
     //private static final String secretKey = "80a7da39b9502adda3b098483f267e293fe631ad9c9be482e5fc13f641d65cc7";
@@ -86,6 +97,15 @@ public class JwtService {
         System.out.println("Validating Token !");
         final String userId = extractUserId(token);
         return (userId.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
+    public boolean isTokenTypeAccess(String token) {
+        Optional<Token> token1 = tokenRepository.findByToken(token);
+        if (token1.isPresent() && token1.get().getTokenType() == TokenType.ACCESS){
+            return true;
+        }
+        System.out.println("Token Type is not access");
+        return false;
     }
 
     private boolean isTokenExpired(String token) {

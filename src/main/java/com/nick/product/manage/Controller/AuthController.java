@@ -48,7 +48,7 @@ public class AuthController {
         String supplierPassword = String.valueOf(request.getSupplier_Password());
         System.out.println("Supplier_id : "+supplierId);
         System.out.println("supplier_password : "+supplierPassword);
-        Supplier supplier = authenticationService.getSupplierById(supplierId);
+        Supplier supplier = authenticationService.getSupplierByIdAndPassword(supplierId, supplierPassword);
 
         authenticationService.revokeAllUserTokens(supplier);
         System.out.println("2 FA : "+supplier.getTwoFactorEnabled());
@@ -75,7 +75,7 @@ public class AuthController {
                         .token(accessToken)
                         .revoked(false)
                         .expired(false)
-                        .tokenType(TokenType.BEARER)
+                        .tokenType(TokenType.ACCESS)
                         .build();
                 Token refresh = Token.builder()
                         .supplier(supplier)
@@ -100,14 +100,14 @@ public class AuthController {
         return null;
     }
 
-//    @PostMapping("/refreshToken")
-//    @SecurityRequirement(name = "bearerAuth")
-//    public void getTokenfromRefreshToken(
-//            HttpServletRequest request,
-//            HttpServletResponse response
-//    ) throws IOException {
-//        authenticationService.refreshToken(request, response);
-//    }
+/*    @PostMapping("/refreshToken")
+    @SecurityRequirement(name = "bearerAuth")
+    public void getTokenfromRefreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        authenticationService.refreshToken(request, response);
+    }*/
 
     @PostMapping("/refreshToken")
     @SecurityRequirement(name = "bearerAuth")

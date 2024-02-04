@@ -1,5 +1,6 @@
 package com.nick.product.manage.Security;
 
+import com.nick.product.manage.Excption.CustomException;
 import com.nick.product.manage.Repository.TokenRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             var isTokenValid = tokenRepository.findByToken(jwt)
                     .map(t -> !t.isExpired() && !t.isRevoked())
                     .orElse(false);
-            if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid){
+            if(jwtService.isTokenValid(jwt,userDetails) && isTokenValid && jwtService.isTokenTypeAccess(jwt)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                 authenticationToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
@@ -61,6 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             else {
                 System.out.println("Token Validation Failed!");
+                throw new CustomException("Invalid Token");
             }
         }
     filterChain.doFilter(request, response);
