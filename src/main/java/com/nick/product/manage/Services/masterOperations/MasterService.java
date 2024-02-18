@@ -3,6 +3,7 @@ package com.nick.product.manage.Services.masterOperations;
 import com.nick.product.manage.Entity.Supplier;
 import com.nick.product.manage.Repository.SuppliersRepository;
 import com.nick.product.manage.Services.AuthenticationService;
+import com.nick.product.manage.Services.EmailService;
 import com.nick.product.manage.Token.Token;
 import com.nick.product.manage.Token.TokenResponse;
 import com.nick.product.manage.Token.TokenType;
@@ -23,6 +24,9 @@ public class MasterService {
     @Autowired
     AuthenticationService authenticationService;
 
+    @Autowired
+    EmailService emailService;
+
     private final TwoFactorAuthenticationService twoFactorAuthenticationService;
 
     private final SuppliersRepository suppliersRepository;
@@ -42,11 +46,15 @@ public class MasterService {
         supplier.setSecret(twoFactorAuthenticationService.generateNewSecret());
         suppliersRepository.save(supplier);
         if(supplier.getTwoFactorEnabled()) {
+            String imageUri = twoFactorAuthenticationService.generateQRCodeImageUri(supplier.getSecret());
             TokenResponse tokenResponse = TokenResponse.builder()
                     .message("Supplier added successfully! , Please note the supplier Id : " +supplier.getSupplier_uid() + " and Supplier auto generated password is : "+supplier.getSupplier_password())
                     .twoFactorEnabled(true)
-                    .secretImageUri(twoFactorAuthenticationService.generateQRCodeImageUri(supplier.getSecret()))
+                    .secretImageUri(imageUri)
                     .build();
+
+            //emailService.sendEmail(supplier.getSupplier_email(),supplier.getSupplier_password(),imageUri);
+
             return ResponseEntity.ok(tokenResponse);
         } else {
             TokenResponse tokenResponse = TokenResponse.builder()
